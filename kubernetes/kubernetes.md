@@ -1,3 +1,44 @@
+- [Kubernetes Components](#kubernetes-components)
+  - [ETCD](#etcd)
+  - [API Server](#api-server)
+  - [Scheduler](#scheduler)
+  - [Controller](#controller)
+  - [Container Runtime](#container-runtime)
+  - [Kubelet](#kubelet)
+- [Master vs Worker Nodes](#master-vs-worker-nodes)
+  - [Cluster Info](#cluster-info)
+- [CRI](#cri)
+    - [OCI standart](#oci-standart)
+    - [ctr](#ctr)
+    - [nerdctl:](#nerdctl)
+    - [crictl](#crictl)
+    - [Extract pod definition from run](#extract-pod-definition-from-run)
+- [Kinds](#kinds)
+  - [Replication Controller](#replication-controller)
+  - [ReplicaSet](#replicaset)
+  - [Deployment](#deployment)
+  - [Namespaces](#namespaces)
+  - [Services](#services)
+    - [Types of Services:](#types-of-services)
+- [Resource Quota](#resource-quota)
+- [Kubectl Explain](#kubectl-explain)
+- [Kubernetes with command and args for Docker](#kubernetes-with-command-and-args-for-docker)
+- [ConfigMaps](#configmaps)
+    - [Imperative:](#imperative)
+    - [Declarative](#declarative)
+- [Secrets](#secrets)
+  - [Types of secrets](#types-of-secrets)
+    - [Opaque Secrets](#opaque-secrets)
+    - [Service Account Token Secrets](#service-account-token-secrets)
+    - [Docker Config Secrets](#docker-config-secrets)
+    - [Basic AUTH secret](#basic-auth-secret)
+    - [TLS Secrets](#tls-secrets)
+    - [Bootstrap Token Secrets](#bootstrap-token-secrets)
+  - [Imperative examples](#imperative-examples)
+
+
+
+
 # Kubernetes Components
 
 ![kube-components](images/kube-components.jpg)
@@ -243,3 +284,107 @@ kubectl [command] [type] [name] - o <ouput_format>
   # Get the documentation of resources in different format
   kubectl explain deployment --output=plaintext-openapiv2
 ```
+
+# Kubernetes with command and args for Docker
+
+Define a command and arguments when you create a Pod
+When you create a Pod, you can define a command and arguments for the containers that run in the Pod. To define a command, include the command field in the configuration file. To define arguments for the command, include the args field in the configuration file. The command and arguments that you define cannot be changed after the Pod is created.
+
+The command and arguments that you define in the configuration file override the default command and arguments provided by the container image. If you define args, but do not define a command, the default command is used with your new arguments.
+
+Note:
+The command field corresponds to ENTRYPOINT, and the args field corresponds to CMD in some container runtimes.
+
+```bash
+kubectl apply -f definitions/pod-commands-args.yaml
+```
+
+# ConfigMaps
+
+A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.
+
+### Imperative:
+
+```bash
+kubectl create configmap app-config --from-literal=APP_COLOR=blue --from-literal=APP_MOD=prod
+```
+
+or 
+
+```bash
+kubectl create configmap app-config --from-file=app_config.properties
+```
+
+### Declarative
+```bash
+kubectl apply -f definitions/configmap.yaml
+```
+
+# Secrets
+A Secret is an object that contains a small amount of sensitive data such as a password, a token, or a key. Such information might otherwise be put in a Pod specification or in a container image. Using a Secret means that you don't need to include confidential data in your application code.
+
+Because Secrets can be created independently of the Pods that use them, there is less risk of the Secret (and its data) being exposed during the workflow of creating, viewing, and editing Pods. Kubernetes, and applications that run in your cluster, can also take additional precautions with Secrets, such as avoiding writing sensitive data to nonvolatile storage.
+
+## Types of secrets 
+
+### Opaque Secrets
+Purpose: Generic type for storing arbitrary key-value pairs.
+Use Case: Ideal for storing passwords, API keys, or any non-structured sensitive data.
+
+```bash
+kubectl apply -f definitions/secrets/opaque.yaml
+```
+
+### Service Account Token Secrets
+Purpose: Automatically created by Kubernetes to allow pods to authenticate with the API server.
+Use Case: Used by pods to interact with the Kubernetes API.
+
+```bash
+kubectl apply -f definitions/secrets/service-account.yaml
+```
+
+### Docker Config Secrets
+Purpose: Stores credentials for accessing private Docker registries.
+Use Case: Used by pods to pull images from private registries.
+
+```bash
+kubectl apply -f definitions/secrets/docker-config.yaml
+```
+
+### Basic AUTH secret
+Purpose: Stores credentials for basic authentication (username/password).
+Use Case: Used for HTTP basic authentication.
+
+```bash
+kubectl apply -f definitions/secrets/basic-auth.yaml
+```
+
+### TLS Secrets
+Purpose: Stores TLS certificates and private keys.
+Use Case: Used for securing HTTPS traffic or mutual TLS (mTLS) communication.
+
+```bash
+kubectl apply -f definitions/secrets/tls.yaml
+```
+
+### Bootstrap Token Secrets
+Purpose: Used during cluster bootstrapping to authenticate new nodes.
+Use Case: Typically used in Kubernetes cluster setup.
+
+
+```bash
+kubectl apply -f definitions/secrets/bootstrap-token.yaml
+```
+
+## Imperative examples
+
+```bash
+kubectl create secret generic app-secret --from-literal=key1=value
+```
+
+or 
+
+```bash
+kubectl create secret generic app-secret --from-file=app_secret.property
+```
+
