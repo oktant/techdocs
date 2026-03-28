@@ -99,7 +99,7 @@ kubectl get pod <pod-name> -o yaml > pod-definition.yaml
 
 # Kinds
 
-![alt text](images/kinds.png)
+![kinds](images/kinds.png)
 
 ## Replication Controller
 
@@ -109,7 +109,18 @@ A Deployment that configures a ReplicaSet is now the recommended way to set up r
  
 ## ReplicaSet
 A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. Usually, you define a Deployment and let that Deployment manage ReplicaSets automatically.
-A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. As such, it is often used to guarantee the availability of a specified number of identical Pods.
+A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. As such, it1§is often used to guarantee the availability of a specified number of identical Pods.
+
+
+```bash
+kubectl scale --replicas=6 -f definitions/replicaset.yaml
+
+kubectl scale --replicas)6 replicaset myapp-replicaset
+
+kubectl apply -f definitions/replicaset.yaml
+
+kubectl explain replicaset # will show docs for replicaset
+``` 
 
 
 
