@@ -35,6 +35,11 @@
     - [TLS Secrets](#tls-secrets)
     - [Bootstrap Token Secrets](#bootstrap-token-secrets)
   - [Imperative examples](#imperative-examples)
+- [Security Context](#security-context)
+- [Resource Requirements](#resource-requirements)
+  - [CPU](#cpu)
+  - [Memory](#memory)
+  - [Limit Ranges](#limit-ranges)
 
 
 
@@ -388,3 +393,62 @@ or
 kubectl create secret generic app-secret --from-file=app_secret.property
 ```
 
+# Security Context
+
+Configure a Security Context for a Pod or Container
+A security context defines privilege and access control settings for a Pod or Container. Security context settings include, but are not limited to:
+
+Discretionary Access Control: Permission to access an object, like a file, is based on user ID (UID) and group ID (GID).
+
+Security Enhanced Linux (SELinux): Objects are assigned security labels.
+
+Running as privileged or unprivileged.
+
+Linux Capabilities: Give a process some privileges, but not all the privileges of the root user.
+
+AppArmor: Use program profiles to restrict the capabilities of individual programs.
+
+Seccomp: Filter a process's system calls.
+
+allowPrivilegeEscalation: Controls whether a process can gain more privileges than its parent process. This bool directly controls whether the no_new_privs flag gets set on the container process. allowPrivilegeEscalation is always true when the container:
+
+is run as privileged, or
+has CAP_SYS_ADMIN
+readOnlyRootFilesystem: Mounts the container's root filesystem as read-only.
+
+The above bullets are not a complete set of security context settings -- please see SecurityContext for a comprehensive list.
+
+Set the security context for a Pod
+To specify security settings for a Pod, include the securityContext field in the Pod specification. The securityContext field is a PodSecurityContext object. The security settings that you specify for a Pod apply to all Containers in the Pod. Here is a configuration file for a Pod that has a securityContext and an emptyDir volume:
+
+```bash
+kubectl apply -f descriptions/security-context.yaml
+```
+
+# Resource Requirements
+
+When you specify a Pod, you can optionally specify how much of each resource a container needs. The most common resources to specify are CPU and memory (RAM); there are others.
+
+When you specify the resource request for containers in a Pod, the kube-scheduler uses this information to decide which node to place the Pod on. When you specify a resource limit for a container, the kubelet enforces those limits so that the running container is not allowed to use more of that resource than the limit you set. The kubelet also reserves at least the request amount of that system resource specifically for that container to use.
+
+This feature can be enabled by setting the PodLevelResources feature gate. The following Pod has an explicit request of 1 CPU and 100 MiB of memory, and an explicit limit of 1 CPU and 200 MiB of memory. The pod-resources-demo-ctr-1 container has explicit requests and limits set. However, the pod-resources-demo-ctr-2 container will simply share the resources available within the Pod resource boundaries, as it does not have explicit requests and limits set.
+
+```bash
+kubectl apply -f definitions/resource-requirements.yaml
+```
+
+## CPU
+
+![CPU behaviour](images/cpu.png)
+
+## Memory
+
+![alt text](images/memory.png)
+
+## Limit Ranges
+
+By default, containers run with unbounded compute resources on a Kubernetes cluster. Using Kubernetes resource quotas, administrators (also termed cluster operators) can restrict consumption and creation of cluster resources (such as CPU time, memory, and persistent storage) within a specified namespace. Within a namespace, a Pod can consume as much CPU and memory as is allowed by the ResourceQuotas that apply to that namespace. As a cluster operator, or as a namespace-level administrator, you might also be concerned about making sure that a single object cannot monopolize all available resources within a namespace.
+
+```bash
+kubectl apply -f definitions/limit-range.yaml
+```
