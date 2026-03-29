@@ -5,11 +5,11 @@ metadata:
 spec:
   limits:
   - default: # this section defines default limits
-      cpu: 500m
+      cpu: 500m  #use memory
     defaultRequest: # this section defines default requests
-      cpu: 500m
+      cpu: 500m  # use memory
     max: # max and min define the limit range
-      cpu: "1"
+      cpu: "1" #use memory
     min:
-      cpu: 100m
+      cpu: 100m #use memory
     type: Container
