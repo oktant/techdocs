@@ -40,6 +40,7 @@
   - [CPU](#cpu)
   - [Memory](#memory)
   - [Limit Ranges](#limit-ranges)
+- [Service Accounts](#service-accounts)
 
 
 
@@ -451,4 +452,18 @@ By default, containers run with unbounded compute resources on a Kubernetes clus
 
 ```bash
 kubectl apply -f definitions/limit-range.yaml
+```
+
+# Service Accounts
+
+![service account](images/service-accounts.png)
+
+```bash
+kubectl create serviceaccount dashboard-sa
+
+kubectl create token dashboard-sa
+
+kubectl get serviceaccount
+
+kubectl describe serviceaccount dashboard-sa
 ```
