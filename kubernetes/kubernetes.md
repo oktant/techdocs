@@ -41,6 +41,10 @@
   - [Memory](#memory)
   - [Limit Ranges](#limit-ranges)
 - [Service Accounts](#service-accounts)
+- [Taint and tolerations](#taint-and-tolerations)
+      - [NoExecute](#noexecute)
+      - [NoSchedule](#noschedule)
+      - [PreferNoSchedule](#prefernoschedule)
 
 
 
@@ -467,3 +471,39 @@ kubectl get serviceaccount
 
 kubectl describe serviceaccount dashboard-sa
 ```
+
+# Taint and tolerations
+
+Node affinity is a property of Pods that attracts them to a set of nodes (either as a preference or a hard requirement). Taints are the opposite -- they allow a node to repel a set of pods.
+
+Tolerations are applied to pods. Tolerations allow the scheduler to schedule pods with matching taints. Tolerations allow scheduling but don't guarantee scheduling: the scheduler also evaluates other parameters as part of its function.
+
+Taints and tolerations work together to ensure that pods are not scheduled onto inappropriate nodes. One or more taints are applied to a node; this marks that the node should not accept any pods that do not tolerate the taints.
+
+You add a taint to a node using kubectl taint. For example,
+
+```bash
+kubectl taint nodes node1 key1=value1:NoSchedule
+```
+
+You specify a toleration for a pod in the PodSpec. Both of the following tolerations "match" the taint created by the kubectl taint line above, and thus a pod with either toleration would be able to schedule onto node1:
+
+```bash
+tolerations:
+- key: "key1"
+  operator: "Equal"
+  value: "value1"
+  effect: "NoSchedule"
+```
+
+The allowed values for the effect field are:
+
+ #### NoExecute
+This affects pods that are already running on the node as follows:
+ - Pods that do not tolerate the taint are evicted immediately
+ - Pods that tolerate the taint without specifying tolerationSeconds in their toleration specification remain bound forever
+ - Pods that tolerate the taint with a specified tolerationSeconds remain bound for the specified amount of time. After that time elapses, the node lifecycle controller evicts the Pods from the node.
+ #### NoSchedule
+ - No new Pods will be scheduled on the tainted node unless they have a matching toleration. Pods currently running on the node are not evicted.
+ #### PreferNoSchedule 
+ - PreferNoSchedule is a "preference" or "soft" version of NoSchedule. The control plane will try to avoid placing a Pod that does not tolerate the taint on the node, but it is not guaranteed.
