@@ -46,6 +46,7 @@
       - [NoExecute](#noexecute)
       - [NoSchedule](#noschedule)
       - [PreferNoSchedule](#prefernoschedule)
+- [Ingress](#ingress)
 
 
 # Kubernetes
@@ -517,3 +518,17 @@ This affects pods that are already running on the node as follows:
  - No new Pods will be scheduled on the tainted node unless they have a matching toleration. Pods currently running on the node are not evicted.
  #### PreferNoSchedule 
  - PreferNoSchedule is a "preference" or "soft" version of NoSchedule. The control plane will try to avoid placing a Pod that does not tolerate the taint on the node, but it is not guaranteed.
+
+# Ingress 
+
+Ingress Controller: 
+
+![alt text](images/without-ingress.png)
+
+![alt text](images/ingress.png)
+
+![alt text](images/ingress-config.png)
+
+Ingress Resources:
+
+![alt text](images/ingress-resource.png)
