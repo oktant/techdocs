@@ -1,3 +1,4 @@
+- [Kubernetes](#kubernetes)
 - [Kubernetes Components](#kubernetes-components)
   - [ETCD](#etcd)
   - [API Server](#api-server)
@@ -47,11 +48,20 @@
       - [PreferNoSchedule](#prefernoschedule)
 
 
+# Kubernetes
+
+First things first…what the heck is Kubernetes? Kubernetes is a container orchestration system that lets you deploy, scale, and manage containerized applications.
+
+![kub1](images/kub1.png)
+
+Kubernetes is an open source and written in Golang, the same language as Docker and a lot of other CNCF native soltuions. Kubernetes helps to operate and manage containerized apps. Kubernetes provides a platform for deploying, scaling and managing containerized applications. 
+
+
 
 
 # Kubernetes Components
 
-![kube-components](images/kube-components.jpg)
+![kube-components](images/kube-components.png)
 
 ## ETCD
 ETCD is an open-source, distributed key-value storage system that facilitates the configuration of resources, the discovery of services, and the coordination of distributed systems such as clusters and containers. Its functionalities include distributing and scheduling work across multiple hosts, enabling automatic updates that are safer, and setting up overlay networking for containers. etcd is designed to maintain redundancy and resilience in cloud systems and is the standard storage system used in Kubernetes. 
