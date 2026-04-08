@@ -92,7 +92,7 @@ A Kubelet in Kubernetes is a crucial component of the primary node agent that ru
 
 ![master-vs-worker-nodes](images/master-vs-worker-nodes.png)
 
-
+![eviction](images/nodes.png)
 ## Cluster Info
 
 Run on cluster:
@@ -233,7 +233,7 @@ In Kubernetes, a Service is a method for exposing a network application that is 
 
 ### Types of Services:
   - ClusterIP - Exposes the Service on a cluster-internal IP. 
-  - NodePort - Exposes the Service on each Node's IP at a static port (the NodePort). 
+  - NodePort - Exposes the Service on each Node's IP at a static port (the NodePort) (30000-32767). 
     ![nodeport](images/nodeport.png)
   - LoadBalancer - Exposes the Service externally using an external load balancer. 
 
