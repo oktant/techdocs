@@ -51,7 +51,7 @@
 
 # Kubernetes
 
-First things first…what the heck is Kubernetes? Kubernetes is a container orchestration system that lets you deploy, scale, and manage containerized applications.
+First things first…what is Kubernetes? Kubernetes is a container orchestration system that lets you deploy, scale, and manage containerized applications.
 
 ![kub1](images/kub1.png)
 
