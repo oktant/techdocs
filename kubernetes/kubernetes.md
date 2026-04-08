@@ -47,6 +47,7 @@
       - [NoSchedule](#noschedule)
       - [PreferNoSchedule](#prefernoschedule)
 - [Ingress](#ingress)
+- [Node Selector](#node-selector)
 
 
 # Kubernetes
@@ -532,3 +533,23 @@ Ingress Controller:
 Ingress Resources:
 
 ![alt text](images/ingress-resource.png)
+
+
+# Node Selector
+
+![alt text](images/node-selector.png)
+
+
+to label a node:
+
+```bash
+kubectl label nodes <node-name> <label-key>=<label-value>
+
+kubectl label nodes node-1 size=Large
+```
+
+Limitation:
+complex rules cannot be achived with Node selectors:
+e.g how if we want to have specify several nodes:
+  Large or Medium?
+  Not Small
