@@ -49,6 +49,9 @@
       - [PreferNoSchedule](#prefernoschedule)
 - [Ingress](#ingress)
 - [Node Selector](#node-selector)
+- [Node Affinity](#node-affinity)
+- [Multi container pods](#multi-container-pods)
+- [Init containers](#init-containers)
 - [Kubernetes Operator and Controller](#kubernetes-operator-and-controller)
 - [Best Practices](#best-practices)
 
@@ -558,11 +561,36 @@ e.g how if we want to have specify several nodes:
   Large or Medium?
   Not Small
 
+# Node Affinity  
+
+Node affinity is conceptually similar to nodeSelector, allowing you to constrain which nodes your Pod can be scheduled on based on node labels. There are two types of node affinity:
+
+requiredDuringSchedulingIgnoredDuringExecution: The scheduler can't schedule the Pod unless the rule is met. This functions like nodeSelector, but with a more expressive syntax.
+preferredDuringSchedulingIgnoredDuringExecution: The scheduler tries to find a node that meets the rule. If a matching node is not available, the scheduler still schedules the Pod.
+
+```bash
+kubectl apply -f definitions/node-affinity.yaml
+```
+
+# Multi container pods
+
+# Init containers
+
+At times you may want to run a process that runs to completion in a container. For example a process that pulls a code or binary from a repository that will be used by the main web application. That is a task that will be run only one time when the pod is first created. Or a process that waits for an external service or database to be up before the actual application starts. That's where initContainers comes in.
+
+
+
+An initContainer is configured in a pod like all other containers, except that it is specified inside a initContainers section, like this:
+
 # Kubernetes Operator and Controller
+
 
 ![alt text](images/controller.png)
 
 ![alt text](images/operator.png)
+
+
+
 
 
 
