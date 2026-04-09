@@ -37,6 +37,7 @@
     - [Bootstrap Token Secrets](#bootstrap-token-secrets)
   - [Imperative examples](#imperative-examples)
 - [Security Context](#security-context)
+    - [allowPrivilegeEscalation:](#allowprivilegeescalation)
 - [Resource Requirements](#resource-requirements)
   - [CPU](#cpu)
   - [Memory](#memory)
@@ -48,6 +49,8 @@
       - [PreferNoSchedule](#prefernoschedule)
 - [Ingress](#ingress)
 - [Node Selector](#node-selector)
+- [Kubernetes Operator](#kubernetes-operator)
+- [Best Practices](#best-practices)
 
 
 # Kubernetes
@@ -427,11 +430,12 @@ AppArmor: Use program profiles to restrict the capabilities of individual progra
 
 Seccomp: Filter a process's system calls.
 
-allowPrivilegeEscalation: Controls whether a process can gain more privileges than its parent process. This bool directly controls whether the no_new_privs flag gets set on the container process. allowPrivilegeEscalation is always true when the container:
+### allowPrivilegeEscalation: 
+Controls whether a process can gain more privileges than its parent process. This bool directly controls whether the no_new_privs flag gets set on the container process. allowPrivilegeEscalation is always true when the container:
 
-is run as privileged, or
-has CAP_SYS_ADMIN
-readOnlyRootFilesystem: Mounts the container's root filesystem as read-only.
+ - is run as privileged, or
+ - has CAP_SYS_ADMIN
+ - readOnlyRootFilesystem: Mounts the container's root filesystem as read-only.
 
 The above bullets are not a complete set of security context settings -- please see SecurityContext for a comprehensive list.
 
@@ -553,3 +557,26 @@ complex rules cannot be achived with Node selectors:
 e.g how if we want to have specify several nodes:
   Large or Medium?
   Not Small
+
+# Kubernetes Operator
+
+![alt text](images/operator.png)
+
+
+
+# Best Practices
+
+1. Use namespaces to separate tools/environments (dev,qa,prod) or tooling if we want to introduce namespace ResourceQuota
+2. Being as much stateless as possible for pods and workloads
+3. Use resource requests and limits
+4. Use scaling and replicas
+5. Deploy code as Deployment, StatefulSets across Nodes
+6. Multiple nodes for HA
+7. Use RBAC to manage cluster ServiceAccounts, RoleBindings, ClusterRoleBindings
+8. Keep Kubernetes up to date
+9. Use Prometheus or similar tool to monitor kubernetes
+10. Use version control for images and your code
+11. Keep containers as slim as possible use images with fewer libraries
+12. Try to add labels to containers
+13. Use declarative configurations
+14. Use Network Policies
