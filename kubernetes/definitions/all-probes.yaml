@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: readiness
+  name: readiness
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: readiness
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: readiness
+    spec:
+      containers:
+      - image: <interesting-app>
+        name: probes
+        resources: {}
+        ports:
+        - containerPort: 8080
+        livenessProbe: ## tcpSocker ##command
+          httpGet:
+            path: /main
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 8
+        startupProbe: ## tcpSocker ##command
+          httpGet:
+            path: /main
+            port: 8080
+          failureThreshold: 30
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:  ## tcpSocker ##command
+            path: /main
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          failureThreshold: 1

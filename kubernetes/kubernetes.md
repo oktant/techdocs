@@ -53,6 +53,12 @@
 - [Multi container pods](#multi-container-pods)
 - [Init containers](#init-containers)
 - [Kubernetes Operator and Controller](#kubernetes-operator-and-controller)
+- [kubectl autoscale](#kubectl-autoscale)
+- [Pod Status](#pod-status)
+  - [Pod Conditions](#pod-conditions)
+  - [Startup probe](#startup-probe)
+  - [Liveness Probe](#liveness-probe)
+  - [Readiness probe](#readiness-probe)
 - [Best Practices](#best-practices)
 
 
@@ -590,8 +596,82 @@ An initContainer is configured in a pod like all other containers, except that i
 ![alt text](images/operator.png)
 
 
+# kubectl autoscale
+Auto-scale a deployment, replica set, stateful set, or replication controller. 
+Creates an autoscaler that automatically chooses and sets the number of pods that run in a Kubernetes cluster. The command will attempt to use the autoscaling/v2 API first, in case of an error, it will fall back to autoscaling/v1 API.
+
+Looks up a deployment, replica set, stateful set, or replication controller by name and creates an autoscaler that uses the given resource as a reference. An autoscaler can automatically increase or decrease number of pods deployed within the system as needed.
+
+kubectl autoscale (-f FILENAME | TYPE NAME | TYPE/NAME) [--min=MINPODS] --max=MAXPODS [--cpu=CPU] [--memory=MEMORY]
 
 
+Example:
+
+```bash
+# Auto scale a deployment "foo", with the number of pods between 2 and 10, no target CPU utilization specified so a default autoscaling policy will be used
+kubectl autoscale deployment foo --min=2 --max=10
+  
+# Auto scale a replication controller "foo", with the number of pods between 1 and 5, target CPU utilization at 80%
+kubectl autoscale rc foo --max=5 --cpu=80%
+  
+# Auto scale a deployment "bar", with the number of pods between 3 and 6, target average CPU of 500m and memory of 200Mi
+kubectl autoscale deployment bar --min=3 --max=6 --cpu=500m --memory=200Mi
+  
+# Auto scale a deployment "bar", with the number of pods between 2 and 8, target CPU utilization 60% and memory utilization 70%
+kubectl autoscale deployment bar --min=3 --max=6 --cpu=60% --memory=70%
+```
+
+# Pod Status
+
+| Value | Description |
+|-------|-------------|
+| Pending | The Pod has been accepted by the Kubernetes cluster, but one or more of the containers has not been set up and made ready to run. This includes time a Pod spends waiting to be scheduled as well as the time spent downloading container images over the network. |
+| Running | The Pod has been bound to a node, and all of the containers have been created. At least one container is still running, or is in the process of starting or restarting. |
+| Succeeded | All containers in the Pod have terminated in success, and will not be restarted. |
+| Failed | All containers in the Pod have terminated, and at least one container has terminated in failure. That is, the container either exited with non-zero status or was terminated by the system, and is not set for automatic restarting. |
+| Unknown | For some reason the state of the Pod could not be obtained. This phase typically occurs due to an error in communicating with the node where the Pod should be running. |
+
+**Note:** When a pod is failing to start repeatedly, `CrashLoopBackOff` may appear in the Status field of some kubectl commands. Similarly, when a pod is being deleted, `Terminating` may appear in the Status field of some kubectl commands.
+
+A Pod is granted a term to terminate gracefully, which defaults to 30 seconds. You can use the flag `--force` to terminate a Pod by force.
+ 
+ ## Pod Conditions
+A Pod has a PodStatus, which has an array of PodConditions through which the Pod has or has not passed. The kubelet manages the following PodConditions:
+
+- PodScheduled: the Pod has been scheduled to a node.
+- PodReadyToStartContainers: (beta feature; enabled by default) the Pod sandbox has been successfully created and networking configured.
+- ContainersReady: all containers in the Pod are ready.
+- Initialized: all init containers have completed successfully.
+- Ready: the Pod is able to serve requests and should be added to the load balancing pools of all matching Services.
+- DisruptionTarget: the pod is about to be terminated due to a disruption (such as preemption, eviction or garbage-collection).
+- PodResizePending: a pod resize was requested but cannot be applied. See Pod resize status.
+- PodResizeInProgress: the pod is in the process of resizing. See Pod resize status.
+
+
+## Startup probe
+Startup probes verify whether the application within a container is started. If a startup probe is configured, Kubernetes does not execute liveness or readiness probes until the startup probe succeeds, allowing the application time to finish its initialization.
+
+This type of probe is only executed at startup, unlike liveness and readiness probes, which are run periodically.
+
+Read more about the Configure Liveness, Readiness and Startup Probes.
+
+## Liveness Probe
+Liveness probes determine when to restart a container. For example, liveness probes could catch a deadlock when an application is running but unable to make progress.
+
+If a container fails its liveness probe repeatedly, the kubelet restarts the container.
+
+Liveness probes do not wait for readiness probes to succeed. If you want to wait before executing a liveness probe, you can either define initialDelaySeconds or use a startup probe.
+
+## Readiness probe
+Readiness probes determine when a container is ready to accept traffic. This is useful when waiting for an application to perform time-consuming initial tasks that depend on its backing services; for example: establishing network connections, loading files, and warming caches. Readiness probes can also be useful later in the container’s lifecycle, for example, when recovering from temporary faults or overloads.
+
+If the readiness probe returns a failed state, Kubernetes removes the pod from all matching service endpoints.
+
+Readiness probes run on the container during its whole lifecycle.
+
+```bash
+kubectl apply -f definitions/all-probes.yaml
+```
 
 
 # Best Practices
