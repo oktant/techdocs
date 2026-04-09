@@ -49,7 +49,7 @@
       - [PreferNoSchedule](#prefernoschedule)
 - [Ingress](#ingress)
 - [Node Selector](#node-selector)
-- [Kubernetes Operator](#kubernetes-operator)
+- [Kubernetes Operator and Controller](#kubernetes-operator-and-controller)
 - [Best Practices](#best-practices)
 
 
@@ -558,7 +558,9 @@ e.g how if we want to have specify several nodes:
   Large or Medium?
   Not Small
 
-# Kubernetes Operator
+# Kubernetes Operator and Controller
+
+![alt text](images/controller.png)
 
 ![alt text](images/operator.png)
 
